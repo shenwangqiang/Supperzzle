@@ -68,16 +68,32 @@
         _lastBtn.enabled = NO;
     }else if(_lastBtn.tag == btn.tag) {
         //如果两个按钮相同
-        _lastBtn.hidden = YES;
-        btn.tag = YES;
-        _lastBtn = nil;
-        btn.hidden = YES;
-        _count++;
-        if(_count==18){
-            UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:@"提示" message:@"恭喜过关，是否再来一次？" delegate:self cancelButtonTitle:@"不了" otherButtonTitles:@"好的", nil];
-            [alertview setDelegate:self];
-            [alertview show];
-        }
+        
+        
+        
+        // 消除动画
+        [UIView animateWithDuration:2 animations:^{
+            int x = (_lastBtn.frame.origin.x+btn.frame.origin.x)/2;
+            int y  = (_lastBtn.frame.origin.y+btn.frame.origin.y)/2;
+            btn.frame = CGRectMake(x ,y ,50 ,50);
+            _lastBtn.frame = CGRectMake(x, y, 50, 50);
+            btn.alpha = 0;
+            _lastBtn.alpha = 0;
+        } completion:^(BOOL finished){
+            if(finished){
+                _lastBtn.hidden = YES;
+                btn.tag = YES;
+                _lastBtn = nil;
+                btn.hidden = YES;
+                _count++;
+            }
+            if(_count==18){
+                UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:@"提示" message:@"恭喜过关，是否再来一次？" delegate:self cancelButtonTitle:@"不了" otherButtonTitles:@"好的", nil];
+                [alertview setDelegate:self];
+                [alertview show];
+            }
+        }];
+        
     }else{
         //如果两个按钮不相同
         _lastBtn.enabled = YES;
