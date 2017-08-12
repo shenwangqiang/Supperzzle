@@ -10,7 +10,8 @@
 
 @interface ViewController ()
 {
-    UIImage* _lastImage;
+    UIButton* _lastBtn;
+    int _count;
 }
 @end
 
@@ -18,6 +19,7 @@
 
 -(void) startGame{
     //图像名字数组
+    _count = 0;
     NSMutableArray* arrStr = [[NSMutableArray alloc] init];
     for(int k = 0; k < 18 ;k++){
         int random = arc4random() % 7 + 1;
@@ -59,28 +61,40 @@
 
 - (void) pressBtn: (UIButton*) btn
 {
-    //创建一个静态变量，保存第一次按下按钮的风格
-    static UIButton* btnFirst = nil;
-    if (btnFirst == nil) {
-        btnFirst = btn;
+    
+    if (_lastBtn == nil) {
+        _lastBtn = btn;
         //锁定第一个按钮
-        btnFirst.enabled = NO;
-    }else if(btnFirst == btn){
-        // 同一按钮取消选中
-        btnFirst.enabled = YES;
-        btnFirst = nil;
-    }else if(btnFirst.tag == btn.tag) {
+        _lastBtn.enabled = NO;
+    }else if(_lastBtn.tag == btn.tag) {
         //如果两个按钮相同
-        btnFirst.hidden = YES;
+        _lastBtn.hidden = YES;
         btn.tag = YES;
-        btnFirst = nil;
+        _lastBtn = nil;
         btn.hidden = YES;
+        _count++;
+        if(_count==18){
+            UIAlertView *alertview = [[UIAlertView alloc] initWithTitle:@"提示" message:@"恭喜过关，是否再来一次？" delegate:self cancelButtonTitle:@"不了" otherButtonTitles:@"好的", nil];
+            [alertview setDelegate:self];
+            [alertview show];
+        }
     }else{
         //如果两个按钮不相同
-        btnFirst.enabled = YES;
-        btnFirst = nil;
+        _lastBtn.enabled = YES;
+        _lastBtn = nil;
     }
 }
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(buttonIndex ==0){
+        exit(0);
+    } else {
+        [self startGame];
+    }
+}
+
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
